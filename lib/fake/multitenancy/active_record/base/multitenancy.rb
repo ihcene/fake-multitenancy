@@ -34,6 +34,14 @@ ActiveRecord::Base.instance_eval do
       def multitenant?
         columns.map(&:name).include?("tenant")
       end
+
+      def find_by_sql(*)
+        if multitenant? && !Rails.env.production?
+          Rails.logger.warn "WARNING : You are using find_by_sql. Make sure you include a multitenacy limitation clause: \"where `tenant` = :tenant, tenant: Tenant.current.name\""
+        end
+
+        super
+      end
     end
   end
 end

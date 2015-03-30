@@ -1,6 +1,7 @@
 class ActiveRecord::Base
   def self.inherited(klass)
     super
+
     return if klass.name.eql?('SchemaMigration')
 
     klass.class_eval do

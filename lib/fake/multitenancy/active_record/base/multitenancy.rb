@@ -1,4 +1,4 @@
-ActiveRecord::Base.instance_eval do 
+ActiveRecord::Base.instance_eval do
   concerning :Multitenacy do
     included do
       before_create do

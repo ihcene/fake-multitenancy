@@ -1,4 +1,4 @@
-class ActiveRecord::SchemaDumper 
+class ActiveRecord::SchemaDumper
   def table(table, stream)
     columns = @connection.columns(table)
     begin
@@ -10,7 +10,7 @@ class ActiveRecord::SchemaDumper
       elsif @connection.respond_to?(:primary_key)
         pk = @connection.primary_key(table)
       end
-      
+
       multitenant = (pk == 'multitenant_id')
 
       tbl.print "  create_table #{remove_prefix_and_suffix(table).inspect}"
@@ -19,7 +19,7 @@ class ActiveRecord::SchemaDumper
         unless multitenant
           tbl.print %Q(, multitenant: false)
         end
-        
+
         if pk != 'id' && pk != 'multitenant_id'
           tbl.print %Q(, primary_key: "#{pk}")
         elsif pkcol.sql_type == 'uuid'
@@ -63,7 +63,7 @@ class ActiveRecord::SchemaDumper
 
       column_specs.each do |colspec|
         next if multitenant && colspec[:name].in?(['"id"', '"tenant"'])
-        
+
         values = keys.zip(lengths).map{ |key, len| colspec.key?(key) ? colspec[key] + ", " : " " * len }
         values.unshift colspec[:type]
         tbl.print((format_string % values).gsub(/,\s*$/, ''))
@@ -85,11 +85,11 @@ class ActiveRecord::SchemaDumper
 
     stream
   end
-  
+
   def indexes(table, stream)
     indexes = @connection.indexes(table)
                          .reject{ |index| index.columns.in?([['id'], ['tenant'] ,['id', 'tenant']]) }
-                         
+
     if indexes.any?
       add_index_statements = indexes.map do |index|
         statement_parts = [
